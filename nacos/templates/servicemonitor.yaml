@@ -1,0 +1,28 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nacos-monitor
+  namespace: {{ $.Release.Namespace }}
+spec:
+  endpoints:
+    - interval: 60s
+      {{- if eq .Values.nacos.contextPath ""  }}
+      path: /nacos/prometheus
+      {{- else }}
+      path: {{ .Values.nacos.contextPath }}/prometheus
+      {{- end }}
+      port: http
+      basicAuth:
+        password:
+          key: password
+          name: "{{ .Values.nacos.adminBasicAuthSecretName }}"
+        username:
+          key: username
+          name: "{{ .Values.nacos.adminBasicAuthSecretName }}"
+  jobLabel: service_name
+  namespaceSelector:
+    matchNames:
+      - {{ $.Release.Namespace }}
+  selector:
+    matchLabels:
+      service_name: nacos-hs

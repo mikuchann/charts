@@ -1,0 +1,95 @@
+{{- if eq .Values.nacos.storage.type "mysql"}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nacos-cm
+  namespace: {{ $.Release.Namespace }}
+data:
+  {{- with .Values.nacos.storage.db }}
+  mysql.db.host: "{{.host}}"
+  mysql.db.name: "{{ .name }}"
+  mysql.port: "{{ .port | default 3306}}"
+  mysql.param: {{ .param | default "characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true" }}
+  {{- end }}
+  {{- end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nacos-conf
+  namespace: {{ $.Release.Namespace }}
+data:
+  application.properties: |
+    # spring 
+    # contextPath 
+    # firstly check values.nacos.contextPath
+    # if contextPath is empty,fallback to env SERVER_SERVLET_CONTEXTPATH 
+    {{- if eq .Values.nacos.contextPath "/"  }}
+    server.servlet.contextPath=/
+    management.endpoints.web.base-path=/actuator
+    {{- else if eq .Values.nacos.contextPath "" }}
+    server.servlet.contextPath=${SERVER_SERVLET_CONTEXTPATH:/nacos}
+    management.endpoints.web.base-path=${SERVER_SERVLET_CONTEXTPATH:/nacos}/actuator
+    {{- else }}
+    server.servlet.contextPath={{ .Values.nacos.contextPath }}
+    management.endpoints.web.base-path={{ .Values.nacos.contextPath }}/actuator
+    {{- end }}
+    server.port=${NACOS_APPLICATION_PORT:8848}
+    management.server.port=${NACOS_MANAGEMENT_PORT:8080}
+    management.endpoint.auditevents.enabled=false
+    management.endpoints.web.exposure.include=*
+    nacos.prometheus.metrics.enabled=true
+    allowPublicKeyRetrieval=true
+    server.tomcat.accesslog.max-days=30
+    server.tomcat.accesslog.pattern=%h %l %u %t "%r" %s %b %D %{User-Agent}i %{Request-Source}i
+    spring.datasource.platform=${SPRING_DATASOURCE_PLATFORM:""}
+    nacos.cmdb.dumpTaskInterval=3600
+    nacos.cmdb.eventTaskInterval=10
+    nacos.cmdb.labelTaskInterval=300
+    nacos.cmdb.loadDataAtStart=false
+    db.num=${MYSQL_DATABASE_NUM:1}
+    db.url.0=jdbc:mysql://${MYSQL_SERVICE_HOST}:${MYSQL_SERVICE_PORT:3306}/${MYSQL_SERVICE_DB_NAME}?${MYSQL_SERVICE_DB_PARAM:characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true}
+    db.url.1=jdbc:mysql://${MYSQL_SERVICE_HOST}:${MYSQL_SERVICE_PORT:3306}/${MYSQL_SERVICE_DB_NAME}?${MYSQL_SERVICE_DB_PARAM:characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true}
+    db.user=${MYSQL_SERVICE_USER}
+    db.password=${MYSQL_SERVICE_PASSWORD}
+    ### The auth system to use, currently only 'nacos' and 'ldap' is supported:
+    nacos.core.auth.system.type=${NACOS_AUTH_SYSTEM_TYPE:nacos}
+    ### worked when nacos.core.auth.system.type=nacos
+    ### The token expiration in seconds:
+    nacos.core.auth.plugin.nacos.token.expire.seconds=${NACOS_AUTH_TOKEN_EXPIRE_SECONDS:18000}
+    ### The default token:
+    nacos.core.auth.plugin.nacos.token.secret.key=${NACOS_AUTH_TOKEN:eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuYWNvcyIsImV4cCI6MTY4NDg1NDY1OH0.r2ewd8FRRIAD-ymYzYPJJm27E8_5rr4LAcvEJueeeQeeaNfP5JtqUwl6anbeX_MHte_V0f0sRvNasIMmmMQw-Q}
+    {{- if .Values.mcp.enabled  }}
+    nacos.istio.mcp.server.enabled=true
+    {{- end }}
+    ### Turn on/off caching of auth information. By turning on this switch, the update of auth information would have a 15 seconds delay.
+    nacos.core.auth.caching.enabled=${NACOS_AUTH_CACHE_ENABLE:false}
+    nacos.core.auth.enable.userAgentAuthWhite=${NACOS_AUTH_USER_AGENT_AUTH_WHITE_ENABLE:false}
+    nacos.core.auth.server.identity.key=${NACOS_AUTH_IDENTITY_KEY:serverIdentity}
+    nacos.core.auth.server.identity.value=${NACOS_AUTH_IDENTITY_VALUE:security}
+    nacos.core.auth.enabled=${NACOS_AUTH_ENABLE:true}
+    server.tomcat.accesslog.enabled=${TOMCAT_ACCESSLOG_ENABLED:false}
+    # default current work dir
+    server.tomcat.basedir=file:.
+    ## spring security config
+    ### turn off security
+    nacos.security.ignore.urls=${NACOS_SECURITY_IGNORE_URLS:/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-fe/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**}
+    # metrics for elastic search
+    management.metrics.export.elastic.enabled=false
+    management.metrics.export.influx.enabled=false
+    nacos.naming.distro.taskDispatchThreadCount=10
+    nacos.naming.distro.taskDispatchPeriod=200
+    nacos.naming.distro.batchSyncKeyCount=1000
+    nacos.naming.distro.initDataRatio=0.9
+    nacos.naming.distro.syncRetryDelay=5000
+    nacos.naming.data.warmup=true
+    ### Connection pool configuration: hikariCP
+    db.pool.config.connectionTimeout=${MYSQL_POOL_CONFIG_CONNECTIONTIMEOUT:30000}
+    db.pool.config.maximumPoolSize=${MYSQL_POOL_CONFIG_MAXIMUMPOOLSIZE:10}
+    db.pool.config.minimumIdle=${MYSQL_POOL_CONFIG_MINIMUMIDLE:10}
+
+    ### will be removed and replaced by `nacos.naming.clean` properties
+    nacos.naming.empty-service.auto-clean=${NAMING_EMPTYSERVICE_AUTOCLEAN:true}
+    nacos.naming.empty-service.clean.initial-delay-ms=${NAMING_EMPTYSERVICE_CLEAN_INITIALDELAYMS:50000}
+    nacos.naming.empty-service.clean.period-time-ms=${NAMING_EMPTYSERVICE_CLEAN_PERIODTIMEMS:30000}

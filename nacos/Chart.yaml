@@ -1,0 +1,9 @@
+annotations:
+  cpaas.io/arch: amd64.arm64
+  provider: '{"zh":"平台", "en": "platform"}'
+  provider-type: platform
+apiVersion: v1
+appVersion: 2.2.3
+description: A Helm chart for Kubernetes
+name: nacos
+version: v2.2.3

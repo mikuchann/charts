@@ -1,0 +1,88 @@
+global:
+  mode: cluster
+  functionMode: all
+  registry:
+    address: registry.alauda.cn:60080
+  images:
+    plugin:
+      repository: asm/nacos-peer-finder-plugin-for-alauda
+      tag: release-2.2.3.20240205062842
+      support_arm: true
+      thirdparty: true
+    dbInit:
+      repository: asm/nacos-database-init
+      tag: release-2.2.3.20240205062842
+      support_arm: true
+      thirdparty: true
+    nacos:
+      repository: asm/nacos-server
+      tag: release-2.2.3.20240205062842
+      support_arm: true
+      thirdparty: true
+nacos:
+  core:
+    auth:
+      server:
+        identity:
+          key: identitykey
+          value: identityvalue
+  domainName: cluster.local
+  preferhostmode: hostname
+  serverPort: 8848
+  health:
+    enabled: false
+  storage:
+    type: mysql
+    db:
+      host: localhost
+      name: nacos_config
+      port: 3306
+      param: characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true
+      pool:
+        config:
+          connectionTimeout: 30000
+          maximumPoolSize: 10
+          minimumIdle: 10
+  naming:
+    emptyService:
+      autoClean: true
+      clean:
+        initialDelayMs: 50000
+        periodTimeMs: 30000
+  contextPath: /nacos
+jvm:
+  xxInitialRAMPercentage: "75.0"
+  xxMaxRAMPercentage: "75.0"
+persistence:
+  enabled: true
+  data:
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: topolvm
+    resources:
+      requests:
+        storage: 1Gi
+  logdata:
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: topolvm
+    resources:
+      requests:
+        storage: 5Gi
+service:
+  name: nacos
+  nodePort:
+    enabled: false
+  port: 8848
+management:
+  port: 8080
+resources:
+  limits:
+    cpu: "2"
+    memory: 4Gi
+  requests:
+    cpu: "2"
+    memory: 2.5Gi
+podAntiAffinity: required
+mcp:
+  enabled: false

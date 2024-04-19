@@ -1,0 +1,268 @@
+descriptors:
+  - displayName: '镜像仓库地址'
+    path: global.registry.address
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - description: 'nacos-server 的镜像'
+    displayName: 'Nacos 镜像名称'
+    path: global.images.nacos.repository
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:asm/nacos-server'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - displayName: 'Nacos 镜像版本'
+    path: global.images.nacos.tag
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:release-2.2.3.20240205062842'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - description: 'nacos-peer-finder-plugin 的镜像'
+    displayName: '扩容插件镜像名称'
+    path: global.images.plugin.repository
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:asm/nacos-peer-finder-plugin-for-alauda'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - displayName: '扩容插件镜像版本'
+    path: global.images.plugin.tag
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:release-2.2.3.20240205062842'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - description: '执行库表初始化的 Job'
+    displayName: 'Database Init 镜像名称'
+    path: global.images.dbInit.repository
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:asm/nacos-database-init'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - displayName: 'Database Init 镜像版本'
+    path: global.images.dbInit.tag
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:release-2.2.3.20240205062842'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+  - description: '集群内访问 Nacos 的地址，访问路径示例: http://<内部路由>.<命名空间>:8848'
+    displayName: '内部路由名称'
+    path: service.name
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:nacos'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - displayName: '服务端口'
+    path: nacos.serverPort
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:8848'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: '不建议开启外网访问，集群外可通过平台提供的负载均衡器进行访问'
+    displayName: '外网访问'
+    path: service.nodePort.enabled
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+      - 'urn:alm:descriptor:com.tectonic.default:false'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: '设置初始化堆内存占 Pod 内存的百分比。若设置了 -Xms，此参数将无效'
+    displayName: '-XX:InitialRAMPercentage'
+    path: jvm.xxInitialRAMPercentage
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:75.0'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: '最大堆内存占 Pod 内存的百分比。若设置了 -Xmx，此参数将无效。'
+    displayName: '-XX:MaxRAMPercentage'
+    path: jvm.xxMaxRAMPercentage
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:75.0'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - displayName: '资源配置'
+    path: resources
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:resourceRequirements'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: '若选择"强制"，需确保节点数满足 Pod 数要求，Nacos 集群模式默认三节点高可用。由于 TopoLVM 仅支持单节点读写且自动定点，故"强制"会同时依赖 TopoLVM 采用高可用部署。'
+    displayName: 'Pod 反亲和	'
+    path: podAntiAffinity
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:select:required'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:preferred'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.default:required'
+  - description: '正式交付环境，建议选择集群模式，保障 Nacos 三节点高可用'
+    displayName: '部署模式'
+    path: global.mode
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:select:cluster'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:standalone'
+      - 'urn:alm:descriptor:com.tectonic.default:cluster'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: 'Nacos 支持三种启动模式，将根据模式选择性的启动相关功能模块'
+    displayName: '启动模式'
+    path: global.functionMode
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:select:naming'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:config'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:all'
+      - 'urn:alm:descriptor:com.tectonic.default:naming'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: '集群内访问 Nacos Context Path，访问路径示例: http://<内部路由>.<命名空间>:8848/<contextPath>'
+    displayName: '应用的上下文路径'
+    path: nacos.contextPath
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:/nacos'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: 'Nacos 支持 MCP 协议，将根据模式选择性的启动相关功能模块'
+    displayName: 'MCP 协议'
+    path: mcp.enabled
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:select:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:false'
+      - 'urn:alm:descriptor:com.tectonic.default:false'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - path: nacos.adminBasicAuthSecretName
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+      - 'urn:alm:descriptor:com.tectonic.ui:basicAuthSecret:{"usernameReadonly":"true","usernameDefault":"nacos","passwordDefault":"nacos"}'
+      - 'urn:alm:descriptor:label:en:Nacos admin BasicAuth Secret Name'
+      - 'urn:alm:descriptor:label:zh:Nacos 管理员 BasicAuth Secret 名称'
+      - 'urn:alm:descriptor:description:en:Nacos admin Basic auth secret name, enable basic auth access for nacos'
+      - 'urn:alm:descriptor:description:zh:Mysql Basic auth secret名称, 通过对该字段设置当前namasepace下的secret名称来设置密码'
+  - description: 'Nacos Server Identity Key'
+    displayName: 'Server Identity Key'
+    path: nacos.core.auth.server.identity.key
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - description: 'Nacos Server Identity Value'
+    displayName: 'Server Identity Value'
+    path: nacos.core.auth.server.identity.value
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:基本参数'
+  - displayName: "存储卷"
+    description: "正式交付环境，建议选择平台提供的高性能本地存储服务 TopoLVM"
+    path: persistence.enabled
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+      - 'urn:alm:descriptor:com.tectonic.default:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "数据存储类"
+    path: persistence.data.storageClassName
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "访问模式"
+    path: persistence.data.accessModes[0]
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadWriteOnce'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadOnlyMany'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadWriteMany'
+      - 'urn:alm:descriptor:com.tectonic.default:ReadWriteOnce'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "容量"
+    path: persistence.data.resources.requests.storage
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:1Gi'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "日志数据存储类"
+    path: persistence.logdata.storageClassName
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "访问模式"
+    path: persistence.logdata.accessModes[0]
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadWriteOnce'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadOnlyMany'
+      - 'urn:alm:descriptor:com.tectonic.ui:select:ReadWriteMany'
+      - 'urn:alm:descriptor:com.tectonic.default:ReadWriteOnce'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: "容量"
+    path: persistence.logdata.resources.requests.storage
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:persistence.enabled:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:5Gi'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - description: '正式交付环境，建议使用平台应用商店提供的高可用 MySQL PXC Cluster'
+    displayName: '数据库类型'
+    path: nacos.storage.type
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:select:mysql'
+      - 'urn:alm:descriptor:com.tectonic.default:mysql'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: 'db.host'
+    path: nacos.storage.db.host
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: 'db.port'
+    path: nacos.storage.db.port
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:3306'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - displayName: 'db.name'
+    path: nacos.storage.db.name
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:text'
+      - 'urn:alm:descriptor:com.tectonic.default:nacos_config'
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+  - path: nacos.storage.db.basicAuthSecretName
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:数据持久化'
+      - 'urn:alm:descriptor:com.tectonic.ui:basicAuthSecret:{"usernameKey":"mysql.user","passwordKey": "mysql.password"}'
+      - 'urn:alm:descriptor:label:en:Mysql BasicAuth Secret Name'
+      - 'urn:alm:descriptor:label:zh:Mysql BasicAuth Secret 名称'
+      - 'urn:alm:descriptor:description:en:Mysql Basic auth secret name, enable basic auth access for mysql'
+      - 'urn:alm:descriptor:description:zh:Mysql Basic auth secret名称, 通过对该字段设置当前namasepace下的secret名称来设置用户名和密码'
+  - displayName: '自动清理不在线服务'
+    path: nacos.naming.emptyService.autoClean
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch'
+      - 'urn:alm:descriptor:com.tectonic.default:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+  - displayName: "清理延迟时间"
+    path: nacos.naming.emptyService.clean.initialDelayMs
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:nacos.naming.emptyService.autoClean:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:50000'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+  - displayName: "清理间隔时间"
+    path:  nacos.naming.emptyService.clean.periodTimeMs
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:fieldDependency:nacos.naming.emptyService.autoClean:true'
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:30000'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+  - displayName: '最大连接数'
+    description: "maximumPoolSize"
+    path: nacos.storage.db.pool.config.maximumPoolSize
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:10'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+  - displayName: '最小空闲连接数'
+    description: "minimumIdle"
+    path: nacos.storage.db.pool.config.minimumIdle
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:10'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
+  - displayName: '连接超时时间'
+    description: 'connectionTimeout，最低可接受的连接超时时间为 250 ms'
+    path:  nacos.storage.db.pool.config.connectionTimeout
+    x-descriptors:
+      - 'urn:alm:descriptor:com.tectonic.ui:number'
+      - 'urn:alm:descriptor:com.tectonic.default:30000'
+      - 'urn:alm:descriptor:com.tectonic.ui:advanced'
